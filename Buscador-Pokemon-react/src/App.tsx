@@ -1,0 +1,39 @@
+import {BrowserRouter, Routes, Route, NavLink, Navigate} from 'react-router-dom'
+import { PokemonProvider } from './context/PokemonContext';
+import { RegistroUsuario } from './components/RegistroUsuarios'
+import { BuscadorPokemon } from './components/BuscadorPokemon'
+import { InventarioAvtivo } from './components/inventarioPokemon'
+
+ 
+function App(){
+  return(
+    <PokemonProvider>
+      <BrowserRouter>
+        <header>
+          <h1>Formulario Pokemon En React</h1>
+        <nav>
+
+          <NavLink to="/registro" className={({isActive}) => (isActive? 'active-tab' : '')}>  REGISTRO</NavLink>
+          <NavLink to="/buscador" className={({isActive}) => (isActive? 'active-tab' : '')}>  BUSCADOR</NavLink>
+          <NavLink to="/inventario" className={({isActive}) => (isActive? 'active-tab' : '')}>  INVENTARIO</NavLink>
+
+
+        </nav>
+        </header>
+        <main>
+          <Routes>
+            <Route path='/' element={<Navigate to ="registro" replace/>}></Route>
+            <Route path='/registro' element={<RegistroUsuario/>}></Route>
+            <Route path='/buscador' element={<BuscadorPokemon/>}></Route>
+            <Route path='/inventario' element={<InventarioAvtivo/>}></Route>
+
+          </Routes>
+        </main>
+       
+      </BrowserRouter>  
+    </PokemonProvider>
+
+  )
+} 
+
+export default App;

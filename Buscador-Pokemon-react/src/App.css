@@ -1,0 +1,1001 @@
+/* =========================================================
+   POKÉMON NEXUS — ESTILO FUTURISTA / HOLOGRÁFICO
+   Compatible con las clases actuales
+   ========================================================= */
+
+:root {
+  --red: #ff1744;
+  --red-dark: #b00020;
+  --blue: #00b8ff;
+  --blue-dark: #0066ff;
+  --yellow: #ffd600;
+  --purple: #8b5cf6;
+  --cyan: #00f5ff;
+
+  --bg: #070b18;
+  --bg-card: rgba(15, 23, 42, 0.82);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: rgba(255, 255, 255, 0.12);
+
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  --glow-blue: 0 0 25px rgba(0, 184, 255, 0.35);
+  --glow-red: 0 0 25px rgba(255, 23, 68, 0.35);
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+
+  color: var(--text);
+
+  background:
+    radial-gradient(circle at 10% 20%, rgba(0, 184, 255, 0.12), transparent 25%),
+    radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.14), transparent 25%),
+    radial-gradient(circle at 50% 100%, rgba(255, 23, 68, 0.12), transparent 30%),
+    #070b18;
+
+  overflow-x: hidden;
+}
+
+/* Líneas decorativas del fondo */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+
+  background-size: 45px 45px;
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.navbar {
+  position: relative;
+
+  padding: 22px 25px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 23, 68, 0.95),
+      rgba(109, 0, 255, 0.9),
+      rgba(0, 184, 255, 0.9)
+    );
+
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.5),
+    0 0 35px rgba(0,184,255,0.15);
+
+  overflow: hidden;
+}
+
+/* Brillo animado */
+
+.navbar::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: -100%;
+
+  width: 70%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+
+  transform: skewX(-25deg);
+
+  animation: navbarLight 5s infinite;
+}
+
+@keyframes navbarLight {
+  0% {
+    left: -100%;
+  }
+
+  45%,
+  100% {
+    left: 130%;
+  }
+}
+
+.navbar h1 {
+  position: relative;
+
+  margin: 0;
+
+  font-size: 2.2rem;
+  font-weight: 900;
+
+  letter-spacing: 2px;
+
+  color: white;
+
+  text-shadow:
+    0 0 8px rgba(255,255,255,0.8),
+    0 0 20px rgba(0,184,255,0.7);
+
+  z-index: 2;
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+
+.nav-links {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 18px;
+
+  flex-wrap: wrap;
+
+  z-index: 2;
+}
+
+.nav-links a {
+  position: relative;
+
+  padding: 10px 20px;
+
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+
+  border: 1px solid rgba(255,255,255,0.25);
+
+  border-radius: 50px;
+
+  background: rgba(255,255,255,0.1);
+
+  backdrop-filter: blur(10px);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+
+  overflow: hidden;
+}
+
+.nav-links a::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+
+  transform: translateX(-100%);
+
+  transition: transform 0.5s ease;
+}
+
+.nav-links a:hover::before {
+  transform: translateX(100%);
+}
+
+.nav-links a:hover {
+  transform: translateY(-3px);
+
+  background: rgba(255,255,255,0.18);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,0.25),
+    0 0 15px rgba(0,184,255,0.3);
+}
+
+.nav-links a.active-tab {
+  color: #07111f;
+
+  background: linear-gradient(
+    135deg,
+    var(--yellow),
+    #ff9d00
+  );
+
+  border-color: var(--yellow);
+
+  box-shadow:
+    0 0 15px rgba(255,214,0,0.5),
+    0 5px 20px rgba(255,214,0,0.25);
+}
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+   ========================================================= */
+
+.form-container {
+  position: relative;
+
+  width: min(90%, 700px);
+
+  margin: 45px auto;
+
+  padding: 35px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 25, 48, 0.92),
+      rgba(8, 14, 30, 0.88)
+    );
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  border-radius: 24px;
+
+  box-shadow:
+    var(--shadow),
+    0 0 40px rgba(0,184,255,0.08);
+
+  backdrop-filter: blur(18px);
+
+  overflow: hidden;
+}
+
+/* Borde holográfico */
+
+.form-container::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  padding: 1px;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,245,255,0.7),
+      transparent 35%,
+      transparent 65%,
+      rgba(255,23,68,0.7)
+    );
+
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  mask-composite: exclude;
+
+  pointer-events: none;
+}
+
+/* Esfera decorativa */
+
+.form-container::after {
+  content: "";
+
+  position: absolute;
+
+  width: 140px;
+  height: 140px;
+
+  top: -75px;
+  right: -55px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      white 0%,
+      var(--cyan) 8%,
+      var(--blue-dark) 35%,
+      #080b20 70%
+    );
+
+  opacity: 0.35;
+
+  box-shadow:
+    0 0 40px rgba(0,245,255,0.4);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   FILAS
+   ========================================================= */
+
+.form-row {
+  display: flex;
+
+  gap: 18px;
+
+  margin-bottom: 15px;
+
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1;
+
+  min-width: 200px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+
+  color: #dbeafe;
+
+  font-size: 0.85rem;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.form-group input,
+.form-group select {
+  width: 100%;
+
+  padding: 13px 15px;
+
+  color: white;
+
+  font-family: inherit;
+  font-size: 0.95rem;
+
+  background:
+    rgba(2, 6, 23, 0.7);
+
+  border: 1px solid rgba(148,163,184,0.25);
+
+  border-radius: 12px;
+
+  outline: none;
+
+  transition:
+    border 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: rgba(0,184,255,0.45);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  background: rgba(2,6,23,0.9);
+
+  border-color: var(--cyan);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 0 0 3px rgba(0,245,255,0.08),
+    0 0 20px rgba(0,184,255,0.18);
+}
+
+.form-group input::placeholder {
+  color: #64748b;
+}
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+.checkbox-group {
+  margin: 25px 0;
+
+  padding: 17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,184,255,0.08),
+      rgba(139,92,246,0.08)
+    );
+
+  border: 1px solid rgba(0,184,255,0.2);
+
+  border-radius: 14px;
+
+  box-shadow:
+    inset 0 0 20px rgba(0,184,255,0.03);
+}
+
+.checkbox-group label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: #cbd5e1;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 19px;
+  height: 19px;
+
+  accent-color: var(--cyan);
+
+  cursor: pointer;
+}
+
+.checkbox-group a {
+  color: var(--cyan);
+
+  text-decoration: none;
+
+  font-weight: 800;
+
+  transition: 0.3s;
+}
+
+.checkbox-group a:hover {
+  color: var(--yellow);
+
+  text-shadow:
+    0 0 10px rgba(255,214,0,0.6);
+}
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.btn-submit,
+.btn-capturar {
+  position: relative;
+
+  width: 100%;
+
+  padding: 14px 20px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  font-size: 0.95rem;
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.btn-submit::before,
+.btn-capturar::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -100%;
+
+  width: 60%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+
+  transition: 0.5s;
+}
+
+.btn-submit:hover::before,
+.btn-capturar:hover::before {
+  left: 140%;
+}
+
+.btn-submit {
+  margin-top: 10px;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff1744,
+      #d50000
+    );
+
+  box-shadow:
+    0 8px 25px rgba(255,23,68,0.25);
+}
+
+.btn-submit:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 35px rgba(255,23,68,0.4),
+    0 0 20px rgba(255,23,68,0.25);
+}
+
+.btn-capturar {
+  margin-top: 12px;
+
+  color: #07111f;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--yellow),
+      #ff9f00
+    );
+
+  box-shadow:
+    0 8px 25px rgba(255,214,0,0.2);
+}
+
+.btn-capturar:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 35px rgba(255,214,0,0.35);
+}
+
+.btn-submit:active,
+.btn-capturar:active {
+  transform: scale(0.98);
+}
+
+/* =========================================================
+   BANNER DE SESIÓN
+   ========================================================= */
+
+.banner-sesion {
+  position: relative;
+
+  padding: 17px;
+
+  margin-bottom: 25px;
+
+  color: #e0f2fe;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,184,255,0.13),
+      rgba(0,102,255,0.08)
+    );
+
+  border: 1px solid rgba(0,184,255,0.25);
+
+  border-left: 4px solid var(--cyan);
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 0 20px rgba(0,184,255,0.08);
+}
+
+/* =========================================================
+   TARJETA POKÉMON
+   ========================================================= */
+
+.tarjeta-pokemon {
+  position: relative;
+
+  margin-top: 30px;
+
+  padding: 28px;
+
+  text-align: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(0,184,255,0.13),
+      transparent 55%
+    ),
+    rgba(15,23,42,0.75);
+
+  border: 1px solid rgba(0,245,255,0.3);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.35),
+    inset 0 0 30px rgba(0,184,255,0.04);
+
+  overflow: hidden;
+}
+
+.tarjeta-pokemon::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  top: 0;
+
+  height: 3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--red),
+      var(--purple),
+      var(--cyan)
+    );
+}
+
+.tarjeta-pokemon h3 {
+  margin: 0 0 16px;
+
+  color: white;
+
+  font-size: 1.35rem;
+
+  font-weight: 900;
+
+  text-shadow:
+    0 0 15px rgba(0,245,255,0.35);
+}
+
+.tarjeta-pokemon p {
+  margin: 9px 0;
+
+  color: var(--text-muted);
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   GRID MOCHILA
+   ========================================================= */
+
+.grid-mochila {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(190px, 1fr));
+
+  gap: 18px;
+
+  margin-top: 28px;
+}
+
+.tarjeta-item {
+  position: relative;
+
+  padding: 20px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30,41,59,0.8),
+      rgba(15,23,42,0.8)
+    );
+
+  border: 1px solid rgba(148,163,184,0.16);
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.25);
+
+  transition:
+    transform 0.3s ease,
+    border 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.tarjeta-item:hover {
+  transform: translateY(-6px) scale(1.01);
+
+  border-color: rgba(0,184,255,0.45);
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.35),
+    0 0 25px rgba(0,184,255,0.1);
+}
+
+.tarjeta-item h4 {
+  margin: 0 0 10px;
+
+  color: white;
+
+  font-size: 1rem;
+}
+
+.tarjeta-item p {
+  margin: 5px 0;
+
+  color: var(--text-muted);
+
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   FAVORITA
+   ========================================================= */
+
+.tarjeta-favorita {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,214,0,0.13),
+      rgba(30,41,59,0.8)
+    );
+
+  border-color: rgba(255,214,0,0.45);
+
+  box-shadow:
+    0 10px 35px rgba(255,214,0,0.1);
+}
+
+.tarjeta-favorita::before {
+  content: "★";
+
+  position: absolute;
+
+  top: 10px;
+  right: 14px;
+
+  color: var(--yellow);
+
+  font-size: 22px;
+
+  text-shadow:
+    0 0 12px rgba(255,214,0,0.7);
+}
+
+/* =========================================================
+   PANEL DE BOTONES
+   ========================================================= */
+
+.panel-botones {
+  display: flex;
+
+  justify-content: space-around;
+
+  gap: 9px;
+
+  margin-top: 15px;
+
+  flex-wrap: wrap;
+}
+
+.btn-fav,
+.btn-eliminar {
+  flex: 1;
+
+  min-width: 85px;
+
+  padding: 8px 12px;
+
+  border-radius: 9px;
+
+  font-size: 0.82rem;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.btn-fav {
+  color: #cbd5e1;
+
+  background: rgba(255,255,255,0.04);
+
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.btn-fav:hover {
+  color: var(--yellow);
+
+  border-color: var(--yellow);
+
+  background: rgba(255,214,0,0.08);
+
+  box-shadow:
+    0 0 15px rgba(255,214,0,0.12);
+}
+
+.btn-fav.fav-activo {
+  color: #111827;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--yellow),
+      #ff9f00
+    );
+
+  border-color: var(--yellow);
+
+  box-shadow:
+    0 0 18px rgba(255,214,0,0.3);
+}
+
+.btn-eliminar {
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff1744,
+      #b00020
+    );
+
+  border: 1px solid rgba(255,23,68,0.4);
+}
+
+.btn-eliminar:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 0 18px rgba(255,23,68,0.3);
+}
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.tarjeta-pokemon {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .form-container {
+    width: calc(100% - 25px);
+
+    margin: 25px auto;
+
+    padding: 22px;
+
+    border-radius: 18px;
+  }
+
+  .form-row {
+    flex-direction: column;
+
+    gap: 0;
+  }
+
+  .form-group {
+    min-width: 100%;
+  }
+
+  .grid-mochila {
+    grid-template-columns:
+      repeat(auto-fill, minmax(145px, 1fr));
+
+    gap: 12px;
+  }
+
+  .navbar {
+    padding: 18px 12px;
+  }
+
+  .navbar h1 {
+    font-size: 1.55rem;
+  }
+
+  .nav-links {
+    gap: 7px;
+  }
+
+  .nav-links a {
+    padding: 8px 13px;
+
+    font-size: 0.75rem;
+  }
+}
+
+/* =========================================================
+   ACCESIBILIDAD
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
