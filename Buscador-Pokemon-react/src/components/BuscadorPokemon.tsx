@@ -26,7 +26,7 @@ export const BuscadorPokemon: React.FC = () => {
         try {
             const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
 
-            if (!res.ok) throw new Error('Callate sapo');
+            if (!res.ok) throw new Error('No se encontró ese Pokémon. Intenta con otro nombre.');
 
             const datos = await res.json();
 
@@ -39,9 +39,9 @@ export const BuscadorPokemon: React.FC = () => {
                 esFavorito: false
             });
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             setPokemonActual(null);
-            setMensajeError(error.message);
+            setMensajeError(error instanceof Error ? error.message : 'Ocurrió un error al buscar el Pokémon.');
 
         } finally {
             setCargando(false);
@@ -57,7 +57,7 @@ export const BuscadorPokemon: React.FC = () => {
                 `El pokemon ${pokemonActual.name} es guardado en la mochila de ${entrenadorActivo?.nombreCompleto}`
             );
 
-            navigate('/inventario');
+            setPokemonActual(null);
         }
     };
 
@@ -92,6 +92,12 @@ export const BuscadorPokemon: React.FC = () => {
                     {cargando ? 'Escaneando...' : 'Buscar'}
                 </button>
             </form>
+
+            {mensajeError && (
+                <p role="alert" style={{ color: 'crimson', marginTop: '12px' }}>
+                    {mensajeError}
+                </p>
+            )}
 
             {pokemonActual && (
                 <div>
