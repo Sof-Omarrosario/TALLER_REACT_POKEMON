@@ -1,150 +1,155 @@
-import  React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-
-export interface Usuario {
+export interface usuario {
     id: number;
     nombreCompleto: string;
-    documento: {
-        tipo: string, numero: string
-    };
-    celular: string;
-    recidencia: {pais: string, ciudad: string}
+    documento: { tipo: string; numero: string };
     fechaNacimiento: string;
     correo: string;
     datosPersonales: boolean;
-    fehcaRegistro: string;
-    
-};
+    fechaRegistro: string;
+}
 
-export interface PokemonTarjeta  {
+export interface PokemonTarjeta {
     id: number;
     name: string;
     image: string;
     type: string;
-    baseExperience: string;
-    esFavorito?: boolean;
+    baseExperience: number;
+    esFavorito: boolean;
 }
 
-interface PokemonContextType {
-    entrenadores: Usuario[];
-    entrenadorActivo: Usuario | null;
+interface PokemonContextValue {
+    entrenadores: usuario[];
+    entrenadorActivo: usuario | null;
     mochilaActual: PokemonTarjeta[];
-    seleccionarEntrenador: (usuario: Usuario) => void;
-    registrarEntrenador: (usuario: Usuario) => void;
+    seleccionarEntrenador: (usuario: usuario) => void;
+    registrarEntrenador: (usuario: usuario) => void;
     guardarPokemonMochila: (pokemon: PokemonTarjeta) => void;
-    actualizarFavorito: (pokemonId: number) => void;
+    actualizarPokemon: (pokemonId: number) => void;
     eliminarPokemon: (pokemonId: number) => void;
-
-
+    sincronizarConBD: () => void;
 }
 
-const PokemonContext = createContext<PokemonContextType | undefined> (undefined);
-export const PokemonProvider : React.FC<{ children: ReactNode }> = ({children}) => {
-    const [entrenadores,setEntrenadores] = useState<Usuario[]>([]);
-    const [entrenadorActivo,setEntrenadorActivo] = useState<Usuario| null> ( null );
-    const [mochilaActual,setMochilaActual] = useState<PokemonTarjeta[]> ([]);
+const PokemonContext = createContext<PokemonContextValue | undefined>(undefined);
 
-    useEffect(() =>{
-        const data = localStorage.getItem('LISTA_ENTRENADORES');
-        if(data) {
-            const lista: Usuario[]= JSON.parse(data);
-            setEntrenadores(lista);
+export const PokemonProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [entrenadores, setEntrenadores] = useState<usuario[]>([]);
+    const [entrenadorActivo, setEntrenadorActivo] = useState<usuario | null>(null);
+    const [mochilaActual, setMochilaActual] = useState<PokemonTarjeta[]>([]);
 
-            const idActivo = localStorage.getItem('entrenador_activo_id');
-            if(idActivo){
-                const encontrado = lista.find(u => u.id.toString() === idActivo);
-                if (encontrado) seleccionarEntrenador(encontrado);       
-            }
+    // Carga los entrenadores sincronizados siempre desde la BD (localStorage)
+    const sincronizarConBD = () => {
+        const dataEntrenadores = localStorage.getItem('lista_entrenadores');
+        const lista: usuario[] = dataEntrenadores ? JSON.parse(dataEntrenadores) : [];
+        setEntrenadores(lista);
 
+        const idActivo = localStorage.getItem('entrenador_Activo_id');
+        const encontrado = lista.find((u) => u.id.toString() === idActivo);
 
-            
+        if (encontrado) {
+            setEntrenadorActivo(encontrado);
+            cargarMochilaEntrenador(encontrado.id);
+        } else {
+            // Si el entrenador activo ya no existe en la BD (fue eliminado), resetea la selección
+            setEntrenadorActivo(null);
+            setMochilaActual([]);
+            localStorage.removeItem('entrenador_Activo_id');
         }
-       
+    };
 
-    }, [] );
-
-    
-    const cargarMochilaEntrenador = (usuarioId: number ) => {
+    const cargarMochilaEntrenador = (usuarioId: number) => {
         const data = localStorage.getItem(`mochila_${usuarioId}`);
         setMochilaActual(data ? JSON.parse(data) : []);
-    }
+    };
 
-    const seleccionarEntrenador = (usuario: Usuario) => {
+    const seleccionarEntrenador = (usuario: usuario) => {
         setEntrenadorActivo(usuario);
-
-        localStorage.setItem('entrenador_activo_id', usuario.id.toString());
+        localStorage.setItem('entrenador_Activo_id', usuario.id.toString());
         cargarMochilaEntrenador(usuario.id);
-    }
+    };
 
-    const registrarEntrenador = (nuevoUsuario: Usuario) => {
-        const actualizados = [...entrenadores, nuevoUsuario];
+    useEffect(() => {
+        sincronizarConBD();
+
+        // Listener para detectar cambios manuales en el localStorage desde DevTools o entre pestañas
+        const handleStorageChange = () => {
+            sincronizarConBD();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    const registrarEntrenador = (nuevoUsuario: usuario) => {
+        // Validación: Obtener la lista REAL y actualizada desde la BD antes de insertar
+        const data = localStorage.getItem('lista_entrenadores');
+        const listaActualBD: usuario[] = data ? JSON.parse(data) : [];
+
+        const actualizados = [...listaActualBD, nuevoUsuario];
         setEntrenadores(actualizados);
-        localStorage.setItem('LISTA_ENTRENADORES', JSON.stringify(actualizados));
+        localStorage.setItem('lista_entrenadores', JSON.stringify(actualizados));
         seleccionarEntrenador(nuevoUsuario);
-    }
+    };
 
     const guardarPokemonMochila = (pokemon: PokemonTarjeta) => {
         if (!entrenadorActivo) return;
 
-    const storagellave = `mochilla_${entrenadorActivo.id}`;
-    const mochilaGuardada = localStorage.getItem(storagellave);
-    if (!mochilaGuardada) {
-        const validacion = [{ ...pokemon, esFavorito: false }];
-        setMochilaActual(validacion);
-        localStorage.setItem(storagellave, JSON.stringify(validacion));
-        
-        return; 
-    }
-    const actualizada = [ ...mochilaActual, { ...pokemon, esFavorito: false } ];
-    setMochilaActual(actualizada);
-    localStorage.setItem(storagellave, JSON.stringify(actualizada));
+        // Validación clave del tablero: Leer la mochilas directamente desde la BD
+        const dataMochila = localStorage.getItem(`mochila_${entrenadorActivo.id}`);
+        const mochilaBD: PokemonTarjeta[] = dataMochila ? JSON.parse(dataMochila) : [];
 
-       
-
-    }
-
-   
-    const actualizarFavorito = (pokemonId: number) => {
-        if(!entrenadorActivo) return;
-        const actualizada = mochilaActual.map(p => p.id === pokemonId ? {...p, esFavorito: !p.esFavorito} : p);
+        // Guarda SOLO lo que estaba en BD + el nuevo registro (sin arrastrar estado desactualizado del DOM)
+        const actualizada = [...mochilaBD, { ...pokemon, esFavorito: false }];
         setMochilaActual(actualizada);
-        localStorage.setItem(`mochilla_${entrenadorActivo.id}`, JSON.stringify(actualizada))
-        
-    }
+        localStorage.setItem(`mochila_${entrenadorActivo.id}`, JSON.stringify(actualizada));
+    };
+
+    const actualizarPokemon = (pokemonId: number) => {
+        if (!entrenadorActivo) return;
+
+        const dataMochila = localStorage.getItem(`mochila_${entrenadorActivo.id}`);
+        const mochilaBD: PokemonTarjeta[] = dataMochila ? JSON.parse(dataMochila) : [];
+
+        const actualizada = mochilaBD.map((pokemon) =>
+            pokemon.id === pokemonId ? { ...pokemon, esFavorito: !pokemon.esFavorito } : pokemon
+        );
+        setMochilaActual(actualizada);
+        localStorage.setItem(`mochila_${entrenadorActivo.id}`, JSON.stringify(actualizada));
+    };
 
     const eliminarPokemon = (pokemonId: number) => {
-        if(!entrenadorActivo) return;
-        const filtrado = mochilaActual.filter(p => p.id !== pokemonId );
+        if (!entrenadorActivo) return;
+
+        const dataMochila = localStorage.getItem(`mochila_${entrenadorActivo.id}`);
+        const mochilaBD: PokemonTarjeta[] = dataMochila ? JSON.parse(dataMochila) : [];
+
+        const filtrado = mochilaBD.filter((pokemon) => pokemon.id !== pokemonId);
         setMochilaActual(filtrado);
-        localStorage.setItem(`mochilla_${entrenadorActivo.id}`, JSON.stringify(filtrado))
+        localStorage.setItem(`mochila_${entrenadorActivo.id}`, JSON.stringify(filtrado));
     };
 
     return (
-        <PokemonContext.Provider value={{
-            entrenadores,
-            mochilaActual,
-            entrenadorActivo, 
-            seleccionarEntrenador, 
-            registrarEntrenador, 
-            guardarPokemonMochila, 
-            actualizarFavorito, 
-            eliminarPokemon 
-                
-           
-        }} >{children}
+        <PokemonContext.Provider
+            value={{
+                entrenadores,
+                entrenadorActivo,
+                mochilaActual,
+                seleccionarEntrenador,
+                registrarEntrenador,
+                guardarPokemonMochila,
+                actualizarPokemon,
+                eliminarPokemon,
+                sincronizarConBD
+            }}
+        >
+            {children}
         </PokemonContext.Provider>
-           
-      
-             
-            
     );
 };
 
 export const usePokemon = () => {
     const context = useContext(PokemonContext);
-    if(!context) {throw new Error('usePokemon debe usarse en un Provider')
-    }
+    if (!context) throw new Error('usePokemon debe ser usado dentro de un Provider');
     return context;
-}
-
-
+};
